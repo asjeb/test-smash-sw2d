@@ -2,39 +2,33 @@ import smash
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import rasterio
 from rasterio.crs import CRS
+import os
 
 # Bristeau 2005
-# import math
-# R =  6378137.0
-# def y2lat(y):
-#     return np.degrees(2 * np.atan(np.exp (y / R)) - np.pi / 2.0)
-# def lat2y(lat):
-#     return math.log(math.tan(math.pi / 4 + math.radians(lat) / 2)) * R
-# def x2lng(x):
-#     return np.degrees(x / R)
-# def lon2x(lon):
-#     return math.radians(lon) * R
 
+l = 4.
+L = 20.
+N = 60
+M = 12
 
-l = 10.
-L = 10.
-N = 1000
-M = 1000
-x = np.linspace(0, L, N)
-y = np.linspace(0, l, M)
-X, Y = np.meshgrid(x, y)
-Z = 3 * np.ones(X.shape)
-import rasterio
-from rasterio.transform import Affine
-xres = (x[-1] - x[0]) / (len(x))
-yres = (y[-1] - y[0]) / (len(y))
-print(xres, yres)
-transform = rasterio.transform.from_bounds(0, 0, L, l, M, N)
-# transform = Affine.scale(xres, yres)
-print(transform)
-with rasterio.open(
-        "./ratafia.tif",
+def generate_analytical_mesh(length, width, nx, ny, filename):
+    x = np.linspace(0, length, nx)
+    y = np.linspace(0, width, ny)
+    X, Y = np.meshgrid(x, y)
+    Z = 3 * np.ones(X.shape)
+
+    xres = (x[-1] - x[0]) / (len(x))
+    yres = (y[-1] - y[0]) / (len(y))
+
+    transform = rasterio.transform.from_bounds(0, 0, length, width, nx, ny)
+
+    if not os.path.exists("mesh"):
+        os.makedirs("mesh")
+
+    with rasterio.open(
+        "./mesh/{}.tif".format(filename),
         mode="w",
         driver="GTiff",
         height=Z.shape[0],
@@ -43,14 +37,19 @@ with rasterio.open(
         dtype=Z.dtype,
         crs=CRS.from_string("EPSG:2154"),
         transform=transform,
-) as new_dataset:
-        new_dataset.write(Z, 1)
+    ) as new_dataset:
+            new_dataset.write(Z, 1)
+    
+    mesh = smash.factory.generate_mesh(
+        flwdir_path="./mesh/{}.tif".format(filename),
+        bbox=[0, length, 0, width],
+    )
+
+    return mesh
 
 
-mesh = smash.factory.generate_mesh(
-    flwdir_path="./ratafia.tif",
-    bbox=[0, L, 0, l],
-)
+mesh = generate_analytical_mesh(L, l, N, M, "bump")
+
 print(mesh["xres"], mesh["yres"])
 print(mesh["dx"], mesh["dy"])
 
