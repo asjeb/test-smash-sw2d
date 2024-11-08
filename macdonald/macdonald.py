@@ -17,7 +17,7 @@ mesh = analytic_mesh.generate_analytic_mesh(L, l, N, M, "macdo")
 setup = {
     "start_time": "1951-05-17 00:00",
     "end_time": "1951-05-24 00:00",
-    "dt": 3600,
+    "dt": 7200,
     "routing_module": "sw2d",
     "read_prcp": False,
     "prcp_directory": "./prcp",
@@ -82,40 +82,6 @@ print(X)
 
 manning = 0.033
 model.set_rr_parameters("manning", manning)
-topography = topo1(X, manning)
-print(topography)
-topography = np.transpose((np.repeat(topography, model.mesh.nrow)).reshape((model.mesh.ncol, model.mesh.nrow)))
-model.set_rr_parameters("topography", topography)
-topography = model.get_rr_parameters("topography")
-
-he = hsw_ex(X)
-
-res = model.forward_run()
-
-hsw = res.sw2d["hsw"]
-eta = res.sw2d["eta"]
-qx = res.sw2d["qx"]
-qy = res.sw2d["qy"]
-print(X)
-fig, ax = plt.subplots(1, 1, figsize=(8,15))
-plt.fill_between(
-        x=X, 
-        y1=topography[0, :], 
-        color= "grey",
-        label="topography")
-
-plt.plot(X, eta[0, :, 1100], '+', label="free surface", color='b')
-plt.plot(X, he+topography[0, :], label="exact free surface", color='b')
-plt.xlabel("x (m)")
-plt.ylabel("z (m)")
-plt.legend()
-
-
-X = np.linspace(0, L, N)
-print(X)
-
-manning = 0.033
-model.set_rr_parameters("manning", manning)
 topography = topo2(X, manning)
 print(topography)
 topography = np.transpose((np.repeat(topography, model.mesh.nrow)).reshape((model.mesh.ncol, model.mesh.nrow)))
@@ -130,17 +96,20 @@ hsw = res.sw2d["hsw"]
 eta = res.sw2d["eta"]
 qx = res.sw2d["qx"]
 qy = res.sw2d["qy"]
-print(X)
-fig, ax = plt.subplots(1, 1, figsize=(8,15))
+times = res.sw2d_times
+times = times - times[0]
+
+fig, ax = plt.subplots(1, 1, figsize=(8, 15))
 plt.fill_between(
         x=X, 
         y1=topography[0, :], 
         color= "grey",
         label="topography")
 
-plt.plot(X, eta[0, :, 1100], '+', label="free surface", color='b')
-plt.plot(X, he+topography[0, :], label="exact free surface", color='b')
+plt.plot(X, eta[0, :, 800], '+', label="computed free surface", color='black')
+plt.plot(X, he+topography[0, :], label="exact free surface", color='black')
 plt.xlabel("x (m)")
 plt.ylabel("z (m)")
+plt.title("time = {} s".format(int(times[800])))
 plt.legend()
 plt.show()

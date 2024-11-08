@@ -54,7 +54,7 @@ emersive = not(immersive)
 
 fig, ax = plt.subplots(1, 1, figsize=(8,15))
 ax.fill(X, topography[0, :], label="topography", color = "grey")
-plt.plot(X, eta[0, :, 10], '+', label="surface elevation", color='b')
+plt.plot(X, eta[0, :, 10], '+', label="surface elevation", color='black')
 plt.xlabel("x (m)")
 plt.ylabel("z (m)")
 plt.legend()

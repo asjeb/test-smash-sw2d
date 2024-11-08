@@ -35,7 +35,6 @@ qy = res.sw2d["qy"]
 
 X = np.linspace(0, L, N)
 
-
 x0 = 5.
 gravity = 9.81
 
@@ -52,13 +51,8 @@ coeff[4] = gravity ** 2 * hr * (-8. * hl - hr)
 coeff[5] = 0.0
 coeff[6] = (gravity * hr) ** 3
 
-rrange0 = np.sqrt(gravity * hl)
-rrange1 = np.sqrt(gravity * hr)
 roots = np.roots(coeff)
 cm = max(roots.real)
-for i in range(len(roots)):
-    if roots[i].imag == 0. and rrange1 <= roots[i].real <= rrange0:
-        cm = roots[i].real
 
 times = res.sw2d_times 
 times = times - np.min(times)
@@ -70,8 +64,6 @@ for i, t in enumerate(times):
     Xa[i] = x0 - t * np.sqrt(gravity * hl)
     Xb[i] = x0 + t * (2 * np.sqrt(gravity * hl) - 3 * cm)
     Xc[i] = x0 + t * (2 * cm ** 2 * (np.sqrt(gravity * hl) - cm)) / (cm ** 2 - gravity * hr)
-
-
 
 def h_ex(i, t):
     if X[i] <= Xa[t]:
@@ -86,8 +78,6 @@ def h_ex(i, t):
     if Xc[t] <= X[i]:
         return hr
 
-
-
 def u_ex(i, t):
     if X[i] <= Xa[t]:
         return 0.
@@ -101,12 +91,8 @@ def u_ex(i, t):
     if Xc[t] <= X[i]:
         return 0.
 
-
-
 def qx_ex(i, t):
     return h_ex(i, t) * u_ex(i, t)
-
-
 
 he = np.zeros((len(X), len(times)))
 qxe = np.zeros((len(X), len(times)))
@@ -115,37 +101,29 @@ for i in range(len(X)):
         he[i, t] = h_ex(i, t)
         qxe[i, t] = h_ex(i, t) * u_ex(i, t)
 
-# dry bottom
-# if dry:
-#     hl = 0.005
-#     hr = 0.
-
-
 t1=5
 t2=50
 t3=100
-plt.plot(X, eta[0, :, t1], '+', label="computed free surface - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, eta[0, :, t2], '+', label="computed free surface - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, eta[0, :, t3], '+', label="computed free surface - time {:.1f} s".format(times[t3]), color='g')
+plt.plot(X, eta[0, :, t1], '+', label="computed free surface - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, eta[0, :, t2], '+', label="computed free surface - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, eta[0, :, t3], '+', label="computed free surface - time {:.1f} s".format(times[t3]), color='tan')
 
-plt.plot(X, he[:, t1],'-', label="exact free surface - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, he[:, t2],'-', label="exact free surface - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, he[:, t3],'-', label="exact free surface - time {:.1f} s".format(times[t3]), color='g')
-plt.title('Free surface')
+plt.plot(X, he[:, t1],'-', label="exact free surface - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, he[:, t2],'-', label="exact free surface - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, he[:, t3],'-', label="exact free surface - time {:.1f} s".format(times[t3]), color='tan')
 plt.xlabel("x (m)")
 plt.ylabel("z (m)")
 plt.legend()
 plt.show()
 
 
-plt.plot(X, qx[0, :, t1], '+', label="computed flowrate - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, qx[0, :, t2], '+', label="computed flowrate - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, qx[0, :, t3], '+', label="computed flowrate - time {:.1f} s".format(times[t3]), color='g')
+plt.plot(X, qx[0, :, t1], '+', label="computed flowrate - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, qx[0, :, t2], '+', label="computed flowrate - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, qx[0, :, t3], '+', label="computed flowrate - time {:.1f} s".format(times[t3]), color='tan')
 
-plt.plot(X, qxe[:, t1],'-', label="exact flowrate - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, qxe[:, t2],'-', label="exact flowrate - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, qxe[:, t3],'-', label="exact flowrate - time {:.1f} s".format(times[t3]), color='g')
-plt.title('Flowrate')
+plt.plot(X, qxe[:, t1],'-', label="exact flowrate - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, qxe[:, t2],'-', label="exact flowrate - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, qxe[:, t3],'-', label="exact flowrate - time {:.1f} s".format(times[t3]), color='tan')
 
 plt.xlabel("x (m)")
 plt.ylabel("z (m)")

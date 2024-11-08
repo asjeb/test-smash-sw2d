@@ -27,8 +27,9 @@ setup = {
 
 model = smash.Model(setup, mesh)
 
-
 X = np.linspace(0, L, N)
+Y = np.linspace(0, l, M)
+
 x_b = 10.
 def topo(x):
     if 8. < x < 12.:
@@ -36,7 +37,6 @@ def topo(x):
     else:
         topo = 0.0
     return topo
-
 
 topography = np.array([topo(x) for x in X])
 topography = np.transpose((np.repeat(topography, model.mesh.nrow)).reshape((model.mesh.ncol, model.mesh.nrow)))
@@ -71,12 +71,10 @@ for i, x in enumerate(X):
 
 fig, ax = plt.subplots(1, 1, figsize=(8,15))
 ax.fill(X, topography[0, :], label="topography", color = "grey")
-plt.plot(X, hsw[0, :, 10], '+', label="computed water height", color='b')
-plt.plot(X, 2. - topography[0, :], label="exact water height", color='b')
+plt.plot(X, hsw[0, :, 10], '+', label="computed water height", color='black')
+plt.plot(X, 2. - topography[0, :], label="exact water height", color='black')
 plt.plot(X, he, label="exact with inertia", color='g')
 plt.xlabel("x (m)")
 plt.ylabel("z (m)")
 plt.legend()
 plt.show()
-
-

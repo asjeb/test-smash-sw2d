@@ -87,28 +87,26 @@ for i in range(len(X)):
 t1=5
 t2=50
 t3=100
-plt.plot(X, eta[0, :, t1], '+', label="computed free surface - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, eta[0, :, t2], '+', label="computed free surface - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, eta[0, :, t3], '+', label="computed free surface - time {:.1f} s".format(times[t3]), color='g')
+plt.plot(X, eta[0, :, t1], '+', label="computed free surface - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, eta[0, :, t2], '+', label="computed free surface - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, eta[0, :, t3], '+', label="computed free surface - time {:.1f} s".format(times[t3]), color='tan')
 
-plt.plot(X, he[:, t1],'-', label="exact free surface - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, he[:, t2],'-', label="exact free surface - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, he[:, t3],'-', label="exact free surface - time {:.1f} s".format(times[t3]), color='g')
-plt.title('Free surface')
+plt.plot(X, he[:, t1],'-', label="exact free surface - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, he[:, t2],'-', label="exact free surface - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, he[:, t3],'-', label="exact free surface - time {:.1f} s".format(times[t3]), color='tan')
 
 plt.xlabel("x (m)")
 plt.ylabel("z (m)")
 plt.legend()
 plt.show()
 
-plt.plot(X, qx[0, :, t1], '+', label="computed flowrate - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, qx[0, :, t2], '+', label="computed flowrate - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, qx[0, :, t3], '+', label="computed flowrate - time {:.1f} s".format(times[t3]), color='g')
+plt.plot(X, qx[0, :, t1], '+', label="computed flowrate - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, qx[0, :, t2], '+', label="computed flowrate - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, qx[0, :, t3], '+', label="computed flowrate - time {:.1f} s".format(times[t3]), color='tan')
 
-plt.plot(X, qxe[:, t1],'-', label="exact flowrate - time {:.1f} s".format(times[t1]), color='r')
-plt.plot(X, qxe[:, t2],'-', label="exact flowrate - time {:.1f} s".format(times[t2]), color='m')
-plt.plot(X, qxe[:, t3],'-', label="exact flowrate - time {:.1f} s".format(times[t3]), color='g')
-plt.title('Flowrate')
+plt.plot(X, qxe[:, t1],'-', label="exact flowrate - time {:.1f} s".format(times[t1]), color='black')
+plt.plot(X, qxe[:, t2],'-', label="exact flowrate - time {:.1f} s".format(times[t2]), color='grey')
+plt.plot(X, qxe[:, t3],'-', label="exact flowrate - time {:.1f} s".format(times[t3]), color='tan')
 
 plt.xlabel("x (m)")
 plt.ylabel("z (m)")

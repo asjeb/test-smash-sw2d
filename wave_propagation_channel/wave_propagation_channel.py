@@ -92,18 +92,30 @@ hsw = res.sw2d["hsw"]
 eta = res.sw2d["eta"]
 qx = res.sw2d["qx"]
 qy = res.sw2d["qy"]
-times = res.sw2d_times
 
-for i in list(range(0, 500, 50)):
-    plt.figure(i)
-    plt.fill_between(
+times = res.sw2d_times 
+times = times - times[0]
+print(times[0])
+
+nfig = 3
+fig, ax = plt.subplots(nfig, 1, figsize=(8, 15))
+
+print(times[9])
+print(times[10])
+
+t = [20, 100, 400]
+for i in range(nfig):
+    ax[i].fill_between(
         x=X, 
         y1=topography[0, :], 
         color= "grey",
-        label="topography")
-    
-    plt.plot(X, eta[0, :, i], '+', label="time {}".format(i))
-    plt.xlabel("x (m)")
-    plt.ylabel("z (m)")
-    plt.legend()
+    )
+
+    ax[i].plot(X, eta[0, :, t[i]], '-', label="water elevation at time = {:.1f} s".format(times[t[i]]), color = 'black')
+
+plt.xlabel("x (m)")
+plt.ylabel("z (m)")
+
+for i in range(nfig):
+    ax[i].legend()
 plt.show()
