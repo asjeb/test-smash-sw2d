@@ -2,10 +2,11 @@ import smash
 import numpy as np
 import matplotlib.pyplot as plt
 from analytic_mesh import analytic_mesh
+import h5py
 
 
-l = 4.
 L = 20.
+l = 4.
 
 N = 60 # pixel
 M = 12 # pixel
@@ -60,21 +61,42 @@ def cardan(gravity, topography, q_in, h_out):
     coef[3] = q_in ** 2 / (2. * gravity)
     return coef
 
+
+
+topoe = np.empty(len(X)) 
 he = np.empty(len(X))
-qxe = np.empty(len(X))
-qye = np.empty(len(X))
-topoe = np.empty(len(X))
 for i, x in enumerate(X):    
-    coef = cardan(9.81, topo(x), 4.42, 2.0)
+    coef = cardan(9.81, topo(x), 0., 2.0)
     he[i] = max(np.roots(coef).real)
 
 
-fig, ax = plt.subplots(1, 1, figsize=(8,15))
-ax.fill(X, topography[0, :], label="topography", color = "grey")
-plt.plot(X, hsw[0, :, 10], '+', label="computed water height", color='black')
-plt.plot(X, 2. - topography[0, :], label="exact water height", color='black')
-plt.plot(X, he, label="exact with inertia", color='g')
-plt.xlabel("x (m)")
-plt.ylabel("z (m)")
-plt.legend()
-plt.show()
+he_full_sw = np.empty(len(X))
+for i, x in enumerate(X):    
+    coef = cardan(9.81, topo(x), 4.42, 2.0)
+    he_full_sw[i] = max(np.roots(coef).real)
+
+
+
+def relative_error(exact_u, computed_u, ord=None):
+    norm_du = np.linalg.norm(exact_u - computed_u, ord=ord)
+    norm_ue = np.linalg.norm(exact_u, ord=ord)
+    return norm_du / norm_ue
+
+
+L2_error = relative_error(he, hsw[0, :, 10])
+L2_error_full_sw = relative_error(he_full_sw, hsw[0, :, 10])
+print(L2_error)
+print(L2_error_full_sw)
+
+
+with h5py.File("lake_at_rest_{}.hdf5".format(name), "w") as f:
+    f.create_dataset("X", data=X)
+    f.create_dataset("Y", data=Y)
+    f.create_dataset("topography", data=topography)
+    f.create_dataset("eta", data=eta)
+    f.create_dataset("hsw", data=hsw)
+    f.create_dataset("qx", data=qx)
+    f.create_dataset("qy", data=qy)
+    f.create_dataset("L2_error", data=L2_error)
+    f.create_dataset("L2_error_full_sw", data=L2_error_full_sw)
+

@@ -47,7 +47,7 @@ if __name__ == '__main__':
     N = 60
     M = 12
 
-    mesh = generate_analytical_mesh(L, l, N, M, "lake_at_rest")
+    mesh = generate_analytic_mesh(L, l, N, M, "lake_at_rest")
 
     print(mesh["xres"], mesh["yres"])
     print(mesh["dx"], mesh["dy"])

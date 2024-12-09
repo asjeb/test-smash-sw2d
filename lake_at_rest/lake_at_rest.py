@@ -2,10 +2,10 @@ import smash
 import numpy as np
 import matplotlib.pyplot as plt
 from analytic_mesh import analytic_mesh
+import h5py
 
-
-l = 4.
 L = 20.
+l = 4.
 
 N = 60 # pixel
 M = 12 # pixel
@@ -29,6 +29,8 @@ model = smash.Model(setup, mesh)
 
 
 X = np.linspace(0, L, N)
+Y = np.linspace(0, l, M)
+
 x_b = 10.
 def topo(x):
     if 8. < x < 12.:
@@ -50,13 +52,19 @@ qx = res.sw2d["qx"]
 qy = res.sw2d["qy"]
 
 immersive = False
-emersive = not(immersive)
+emerged = not(immersive)
 
-fig, ax = plt.subplots(1, 1, figsize=(8,15))
-ax.fill(X, topography[0, :], label="topography", color = "grey")
-plt.plot(X, eta[0, :, 10], '+', label="surface elevation", color='black')
-plt.xlabel("x (m)")
-plt.ylabel("z (m)")
-plt.legend()
-plt.show()
+if immersive:
+    name = "immersive"
+else:
+    name = "emerged"
+
+with h5py.File("lake_at_rest_{}.hdf5".format(name), "w") as f:
+    f.create_dataset("X", data=X)
+    f.create_dataset("Y", data=Y)
+    f.create_dataset("topography", data=topography)
+    f.create_dataset("eta", data=eta)
+    f.create_dataset("hsw", data=hsw)
+    f.create_dataset("qx", data=qx)
+    f.create_dataset("qy", data=qy)
 

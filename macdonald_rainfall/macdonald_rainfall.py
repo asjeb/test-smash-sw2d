@@ -1,10 +1,8 @@
 import smash
 import numpy as np
 import matplotlib.pyplot as plt
-import smash
-import numpy as np
-import matplotlib.pyplot as plt
 from analytic_mesh import analytic_mesh
+import h5py
 
 L = 1000.
 l = 10.
@@ -17,7 +15,7 @@ mesh = analytic_mesh.generate_analytic_mesh(L, l, N, M, "macdo")
 setup = {
     "start_time": "1951-05-17 00:00",
     "end_time": "1951-05-24 00:00",
-    "dt": 7200,
+    "dt": 100000,
     "routing_module": "sw2d",
     "read_prcp": False,
     "prcp_directory": "./prcp",
@@ -64,6 +62,7 @@ def topo2(X, n):
     return z
 
 X = np.linspace(0, L, N)
+Y = np.linspace(0, l, M)
 
 manning = 0.033
 model.set_rr_parameters("manning", manning)
@@ -84,19 +83,14 @@ times = res.sw2d_times
 times = times - times[0]
 
 
-fig, ax = plt.subplots(1, 1, figsize=(8, 15))
-plt.fill_between(
-        x=X, 
-        y1=topography[0, :], 
-        color= "grey",
-        label="topography")
 
-
-plt.plot(X, eta[0, :, 1000], '+', label="computed free surface", color='black')
-plt.plot(X, he+topography[0, :], label="exact free surface", color='black')
-plt.xlabel("x (m)")
-plt.ylabel("z (m)")
-plt.title("time = {} s".format(int(times[1000])))
-plt.legend()
-plt.show()
-
+with h5py.File("macdonald_rainfall.hdf5", "w") as f:
+    f.create_dataset("X", data=X)
+    f.create_dataset("Y", data=Y)
+    f.create_dataset("times", data=times)
+    f.create_dataset("topography", data=topography)
+    f.create_dataset("eta", data=eta)
+    f.create_dataset("hsw", data=hsw)
+    f.create_dataset("qx", data=qx)
+    f.create_dataset("qy", data=qy)
+    f.create_dataset("he", data=he)
