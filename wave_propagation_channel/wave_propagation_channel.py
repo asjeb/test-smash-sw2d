@@ -95,13 +95,13 @@ qy = res.sw2d["qy"]
 
 times = res.sw2d_times 
 times = times - times[0]
-print(times[0])
+# print(times[0])
 
 nfig = 3
 fig, ax = plt.subplots(nfig, 1, figsize=(8, 15))
 
-print(times[9])
-print(times[10])
+# print(times[9])
+# print(times[10])
 
 t = [20, 100, 400]
 for i in range(nfig):

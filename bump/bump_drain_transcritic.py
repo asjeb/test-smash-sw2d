@@ -2,7 +2,7 @@ import smash
 import numpy as np
 import matplotlib.pyplot as plt
 from analytic_mesh import analytic_mesh
-
+import h5py
 
 l = 4.
 L = 20.
@@ -14,8 +14,8 @@ mesh = analytic_mesh.generate_analytic_mesh(L, l, N, M, "bump")
 
 setup = {
     "start_time": "1951-05-17 00:00",
-    "end_time": "1951-05-24 00:00",
-    "dt": 8000,
+    "end_time": "1951-05-17 01:00",
+    "dt": 3600,
     "routing_module": "sw2d",
     "read_prcp": False,
     "prcp_directory": "./prcp",
@@ -52,7 +52,8 @@ hsw = res.sw2d["hsw"]
 eta = res.sw2d["eta"]
 qx = res.sw2d["qx"]
 qy = res.sw2d["qy"]
-
+times = res.sw2d_times
+times = times - times[0]
 
 def cardan(gravity, topography, q_in, h_out):
     coef = np.empty((4))
@@ -70,16 +71,28 @@ for i, x in enumerate(X):
     coef = cardan(9.81, topo(x), 4.42, 2.0)
     he[i] = max(np.roots(coef).real)
 
+with h5py.File("transcritical_bump.hdf5", "w") as f:
+    f.create_dataset("X", data=X)
+    f.create_dataset("Y", data=Y)
+    f.create_dataset("topography", data=topography)
+    f.create_dataset("eta", data=eta)
+    f.create_dataset("hsw", data=hsw)
+    f.create_dataset("qx", data=qx)
+    f.create_dataset("qy", data=qy)
+    f.create_dataset("times", data=times)
+
 # print(eta[0, :, 950])
 fig, ax = plt.subplots(1, 1, figsize=(8,15))
 ax.fill(X, topography[0, :], label="topography", color = "grey")
-plt.plot(X, eta[0, :, 0], '-', label="t = 0", color='black')
-plt.plot(X, eta[0, :, 20], '--', label="t = 20", color='black')
-plt.plot(X, eta[0, :, 100], '+', label="t = 100", color='black')
-plt.plot(X, eta[0, :, 310], '-', label="t = 310", color='black')
-plt.plot(X, eta[0, :, 600], '-.', label="t = 600", color='black')
-plt.plot(X, eta[0, :, 900], '--', label="t = 900", color='black')
-plt.plot(X, eta[0, :, 1800], '+', label="t = 1000", color='black')
+plt.plot(X, eta[0, :, 0], '-', label="t = {}".format(times[0]), color='black')
+plt.plot(X, eta[0, :, 20], '--', label="t = {}".format(times[20]), color='black')
+# plt.plot(X, eta[0, :, 100], '+', label="t = {}".format(times[100]), color='black')
+# plt.plot(X, eta[0, :, 310], '-', label="t = {}".format(times[310]), color='black')
+# plt.plot(X, eta[0, :, 400], '-.', label="t = {}".format(times[400]), color='black')
+plt.plot(X, eta[0, :, 500], '--', label="t = {}".format(times[500]), color='black')
+plt.plot(X, eta[0, :, 1800], '+', label="t = {}".format(times[1800]), color='black')
+plt.plot(X, eta[0, :, 2500], '+', label="t = {}".format(times[1800]), color='black')
+plt.plot(X, eta[0, :, 5000], '+', label="t = {}".format(times[5000]), color='black')
 
 
 # plt.plot(X, eta[0, :, 1000], '+', label="computed water height", color='black')

@@ -94,6 +94,7 @@ hsw = res.sw2d["hsw"]
 eta = res.sw2d["eta"]
 qx = res.sw2d["qx"]
 qy = res.sw2d["qy"]
+topography_fortran = res.sw2d["topography"]
 times = res.sw2d_times
 times = times - times[0]
 
@@ -102,6 +103,7 @@ with h5py.File("macdonald.hdf5", "w") as f:
     f.create_dataset("Y", data=Y)
     f.create_dataset("times", data=times)
     f.create_dataset("topography", data=topography)
+    f.create_dataset("topography_fortran", data=topography_fortran)
     f.create_dataset("eta", data=eta)
     f.create_dataset("hsw", data=hsw)
     f.create_dataset("qx", data=qx)
