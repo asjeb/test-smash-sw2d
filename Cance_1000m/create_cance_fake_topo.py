@@ -53,7 +53,7 @@ print(transform)
 
 flwdst = mesh["flwdst"]
 flwdst_copy = flwdst.copy()
-flwdst_copy[flwdst_copy != -99] *= 0.00001
+flwdst_copy[flwdst_copy != -99] *= 0.0001
 
 filled_topography = flwdst_copy
 
@@ -89,65 +89,47 @@ topoto = np.where(
     np.nan,
     topoto
 )
-plt.figure()
-plt.imshow(topoto)
-plt.colorbar()
-plt.show()
-
-
-'''
-manning = 0.033
-model = smash.Model(setup, mesh)
-if model.setup.routing_module == "sw2d":
-    model.set_rr_parameters("topography", filled_topography)
-    topo = model.get_rr_parameters("topography")
-
-topo = np.where(
-    topo == -99,
-    np.nan,
-    topo
-)
-# print(topo == filled_topography)
 # plt.figure()
-# plt.imshow(topo)
+# plt.imshow(topoto)
 # plt.colorbar()
 
+# plt.figure()
+# plt.imshow(mesh["active_cell"]);
+# plt.show()
 
-res = model.forward_run(
-    return_options={
-    "internal_fluxes":True,
-    "q_domain":True,
-    },
-)
 
-if model.setup.routing_module == "sw2d":
+# mask = mesh["active_cell"]
+# n, m = mask.shape
 
-    hsw = res.sw2d["hsw"]
-    eta = res.sw2d["eta"]
-    qx = res.sw2d["qx"]
-    qy = res.sw2d["qy"]
-    topography = res.sw2d["topography"]
-    manning = res.sw2d["manning"]
-    times = res.sw2d_times
 
-    with h5py.File("hsw.hdf5", "w") as f:
-        f.create_dataset("hsw", data=hsw)
-    with h5py.File("eta.hdf5", "w") as f:
-        f.create_dataset("eta", data=eta)
-    with h5py.File("qx.hdf5", "w") as f:
-        f.create_dataset("qx", data=qx)
-    with h5py.File("qy.hdf5", "w") as f:
-        f.create_dataset("qy", data=qy)
+# coloring = -99 * np.ones((n, m))
+# for j in range(n):
+#     for i in range(m):
+#         if coloring[i, j] != 2 or coloring[i, j] != 1:
 
-print(eta.shape)
+#             if mask[i, j] == 1:
+#                 coloring[i, j] = 2 # already pass
+
+#                 if j < n - 1:
+#                     if coloring[i, j + 1] != 2 or coloring[i, j + 1] != 1:
+#                         if mask[i, j + 1] == 0:
+#                             coloring[i, j] = 1 
+#                 if j > 0:
+#                     if coloring[i, j - 1] != 2 or coloring[i, j - 1] != 1:
+#                         if mask[i, j - 1] == 0:
+#                             coloring[i, j] = 1
+#                 if i < m - 1:
+#                     if coloring[i + 1, j] != 2 or coloring[i + 1, j] != 1:
+#                         if mask[i + 1, j] == 0:
+#                             coloring[i, j] = 1
+#                 if i > 0:
+#                     if coloring[i - 1, j] != 2 or coloring[i - 1, j] != 1:
+#                         if mask[i - 1, j] == 0:
+#                             coloring[i, j] = 1
+
+# coloring[coloring==2] = -99
+
 plt.figure()
-plt.imshow(eta[:,:,0])
-plt.colorbar()
-
-plt.figure()
-plt.imshow(topography[:,:,0])
-plt.imshow(manning[:,:,0])
-
-plt.colorbar()
+plt.imshow(mesh["boundaries"]);
 plt.show()
-'''
+# print(mesh.boundaries)
